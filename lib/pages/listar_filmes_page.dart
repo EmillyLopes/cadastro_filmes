@@ -28,6 +28,14 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
     });
   }
 
+  void _deleteFilme(int id, int index) async {
+    final dbHelper = DatabaseHelper();
+    await dbHelper.deleteFilme(id);
+    setState(() {
+      filmes.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,47 +59,73 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
         itemBuilder: (context, index) {
           final filme = filmes[index];
           return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+            padding: const EdgeInsets.all(12.0), // Increased padding around the card
+            child: Dismissible(
+              key: Key(filme.id.toString()),
+              direction: DismissDirection.endToStart,
+              onDismissed: (direction) {
+                _deleteFilme(filme.id!, index);
+              },
+              background: Container(
+                alignment: Alignment.centerRight,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                color: Colors.red,
+                child: Icon(Icons.delete, color: Colors.white),
               ),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: Image.network(
-                      filme.urlImagem,
-                      width: 70,
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                    title: Text(
-                      filme.titulo,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Gênero: ${filme.genero}'),
-                        Text('Duração: ${filme.duracao} min'),
-                        RatingBarIndicator(
-                          rating: filme.pontuacao,
-                          itemBuilder: (context, index) => Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          itemCount: 5,
-                          itemSize: 20.0,
-                          direction: Axis.horizontal,
+              child: Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0), // Increased padding inside the card
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        contentPadding: EdgeInsets.all(4.0), // Padding inside ListTile
+                        leading: Image.network(
+                          filme.urlImagem,
+                          width: 50,
+                          height: 250,
+                          fit: BoxFit.scaleDown,
                         ),
-                      ],
-                    ),
-                    onTap: () {
-                      _showOptions(context, filme);
-                    },
+                        title: Text(
+                          filme.titulo,
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), // Increased font size
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 10), // Added space between title and genre
+                            Text('${filme.genero}', style: TextStyle(fontSize: 14)), // Increased font size
+                            SizedBox(height: 4), // Added space between genre and duration
+                            Text('${filme.duracao} min', style: TextStyle(fontSize: 14)), // Increased font size
+                            SizedBox(height: 22), // Added space between duration and rating
+                            Row(
+                              children: [
+                                Text('', style: TextStyle(fontSize: 26)), // Increased font size
+                                RatingBarIndicator(
+                                  rating: filme.pontuacao,
+                                  itemBuilder: (context, index) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  itemCount: 5,
+                                  itemSize: 24.0,
+                                  direction: Axis.horizontal,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          _showOptions(context, filme);
+                        },
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           );
