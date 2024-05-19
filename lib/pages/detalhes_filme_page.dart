@@ -12,7 +12,11 @@ class DetalhesFilmePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalhes do Filme'),
+        backgroundColor: Colors.deepPurple,
+        title: Text(
+          'Detalhes do Filme',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

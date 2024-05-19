@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../database_helper.dart';
@@ -13,75 +12,69 @@ class ListarFilmesPage extends StatefulWidget {
 }
 
 class _ListarFilmesPageState extends State<ListarFilmesPage> {
-  List<Filme> _filmes = [];
-  final dbHelper = DatabaseHelper();
+  List<Filme> filmes = [];
 
   @override
   void initState() {
     super.initState();
-    _loadFilmes();
+    _getFilmes();
   }
 
-  void _loadFilmes() async {
-    List<Filme> filmes = await dbHelper.getFilmes();
+  void _getFilmes() async {
+    final dbHelper = DatabaseHelper();
+    List<Filme> list = await dbHelper.getFilmes();
     setState(() {
-      _filmes = filmes;
+      filmes = list;
     });
-  }
-
-  void _navigateToCadastrarFilme([Filme? filme]) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CadastrarFilmePage(filme: filme),
-      ),
-    );
-    _loadFilmes();
-  }
-
-  void _deleteFilme(int id) async {
-    await dbHelper.deleteFilme(id);
-    _loadFilmes();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Filmes'),
+        backgroundColor: Colors.deepPurple,
+        title: Text(
+          'Filmes',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _navigateToCadastrarFilme(),
+            icon: Icon(Icons.info),
+            onPressed: () {
+              _showAlert(context);
+            },
           ),
         ],
       ),
       body: ListView.builder(
-        itemCount: _filmes.length,
+        itemCount: filmes.length,
         itemBuilder: (context, index) {
-          Filme filme = _filmes[index];
-          return Column(
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.all(10.0),
-                leading: Image.network(
-                  filme.urlImagem,
-                  width: 50,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-                title: Text(
-                  filme.titulo,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Gênero: ${filme.genero}'),
-                    Text('Duração: ${filme.duracao} min'),
-                    Row(
+          final filme = filmes[index];
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: Image.network(
+                      filme.urlImagem,
+                      width: 70,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                    title: Text(
+                      filme.titulo,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Pontuação: '),
+                        Text('Gênero: ${filme.genero}'),
+                        Text('Duração: ${filme.duracao} min'),
                         RatingBarIndicator(
                           rating: filme.pontuacao,
                           itemBuilder: (context, index) => Icon(
@@ -89,38 +82,85 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
                             color: Colors.amber,
                           ),
                           itemCount: 5,
-                          itemSize: 15.0,
+                          itemSize: 20.0,
                           direction: Axis.horizontal,
                         ),
                       ],
                     ),
-                  ],
-                ),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetalhesFilmePage(filme: filme),
+                    onTap: () {
+                      _showOptions(context, filme);
+                    },
                   ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () => _navigateToCadastrarFilme(filme),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => _deleteFilme(filme.id!),
-                    ),
-                  ],
-                ),
+                ],
               ),
-              Divider(thickness: 2),  // Adiciona uma linha horizontal entre os itens
-            ],
+            ),
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CadastrarFilmePage()),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Nome do Grupo"),
+          content: Text("Seu Grupo"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showOptions(BuildContext context, Filme filme) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.info),
+              title: Text('Exibir Dados'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DetalhesFilmePage(filme: filme)),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.edit),
+              title: Text('Alterar'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CadastrarFilmePage(filme: filme)),
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

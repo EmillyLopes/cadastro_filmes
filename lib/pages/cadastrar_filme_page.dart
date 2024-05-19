@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../database_helper.dart';
 import '../models/filme.dart';
@@ -18,12 +18,23 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
   final _formKey = GlobalKey<FormState>();
   late String _urlImagem;
   late String _titulo;
-  late String _genero;
+  late List<String> _generos;
   late String _faixaEtaria;
   late int _duracao;
   late double _pontuacao;
   late String _descricao;
   late int _ano;
+
+  final List<MultiSelectItem<String>> _genreItems = [
+    MultiSelectItem('Ação', 'Ação'),
+    MultiSelectItem('Comédia', 'Comédia'),
+    MultiSelectItem('Drama', 'Drama'),
+    MultiSelectItem('Terror', 'Terror'),
+    MultiSelectItem('Ficção Científica', 'Ficção Científica'),
+    MultiSelectItem('Romance', 'Romance'),
+    MultiSelectItem('Aventura', 'Aventura'),
+    MultiSelectItem('Animação', 'Animação'),
+  ];
 
   @override
   void initState() {
@@ -31,7 +42,7 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
     if (widget.filme != null) {
       _urlImagem = widget.filme!.urlImagem;
       _titulo = widget.filme!.titulo;
-      _genero = widget.filme!.genero;
+      _generos = widget.filme!.genero.split(', ');
       _faixaEtaria = widget.filme!.faixaEtaria;
       _duracao = widget.filme!.duracao;
       _pontuacao = widget.filme!.pontuacao;
@@ -40,7 +51,7 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
     } else {
       _urlImagem = '';
       _titulo = '';
-      _genero = '';
+      _generos = [];
       _faixaEtaria = 'Livre';
       _duracao = 0;
       _pontuacao = 0.0;
@@ -56,7 +67,7 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
         id: widget.filme?.id,
         urlImagem: _urlImagem,
         titulo: _titulo,
-        genero: _genero,
+        genero: _generos.join(', '),
         faixaEtaria: _faixaEtaria,
         duracao: _duracao,
         pontuacao: _pontuacao,
@@ -112,19 +123,36 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
                   _titulo = value!;
                 },
               ),
-              TextFormField(
-                initialValue: _genero,
-                decoration: InputDecoration(labelText: 'Gênero'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira o gênero';
-                  }
-                  return null;
+              SizedBox(height: 16.0),
+              MultiSelectDialogField(
+                items: _genreItems,
+                title: Text("Gêneros"),
+                selectedColor: Colors.deepPurple,
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple.withOpacity(0.1),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(
+                    color: Colors.deepPurple,
+                    width: 2,
+                  ),
+                ),
+                buttonIcon: Icon(
+                  Icons.movie,
+                  color: Colors.deepPurple,
+                ),
+                buttonText: Text(
+                  "Selecione os Gêneros",
+                  style: TextStyle(
+                    color: Colors.deepPurple[900],
+                    fontSize: 16,
+                  ),
+                ),
+                onConfirm: (results) {
+                  _generos = results.cast<String>();
                 },
-                onSaved: (value) {
-                  _genero = value!;
-                },
+                initialValue: _generos,
               ),
+              SizedBox(height: 16.0),
               DropdownButtonFormField<String>(
                 value: _faixaEtaria,
                 decoration: InputDecoration(labelText: 'Faixa Etária'),
@@ -154,6 +182,30 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
                   _duracao = int.parse(value!);
                 },
               ),
+              SizedBox(height: 16.0),
+              Row(
+                children: [
+                  Text(
+                    "Nota: ",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  RatingBar.builder(
+                    initialRating: _pontuacao,
+                    minRating: 0,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                    itemBuilder: (context, _) => Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                    onRatingUpdate: (rating) {
+                      _pontuacao = rating;
+                    },
+                  ),
+                ],
+              ),
               TextFormField(
                 initialValue: _ano.toString(),
                 decoration: InputDecoration(labelText: 'Ano'),
@@ -180,21 +232,6 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
                 },
                 onSaved: (value) {
                   _descricao = value!;
-                },
-              ),
-              RatingBar.builder(
-                initialRating: _pontuacao,
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 5,
-                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
-                onRatingUpdate: (rating) {
-                  _pontuacao = rating;
                 },
               ),
               SizedBox(height: 20),
