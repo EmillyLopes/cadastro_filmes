@@ -27,38 +27,68 @@ class DetalhesFilmePage extends StatelessWidget {
               child: Image.network(filme.urlImagem, height: 250),
             ),
             SizedBox(height: 20),
-            Text(
-              filme.titulo,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  filme.titulo,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  filme.ano.toString(),
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
             ),
-            SizedBox(height: 10),
-            Text('Gênero: ${filme.genero}'),
-            SizedBox(height: 10),
-            Text('Faixa Etária: ${filme.faixaEtaria}'),
-            SizedBox(height: 10),
-            Text('Duração: ${filme.duracao} min'),
-            SizedBox(height: 10),
-            Text('Ano: ${filme.ano}'),
-            SizedBox(height: 10),
-            RatingBarIndicator(
-              rating: filme.pontuacao,
-              itemBuilder: (context, index) => Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              itemCount: 5,
-              itemSize: 30.0,
-              direction: Axis.horizontal,
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    '${filme.genero}',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+                Text(
+                  '${filme.faixaEtaria}',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${filme.duracao} min',
+                  style: TextStyle(fontSize: 14),
+                ),
+                Row(
+                  children: [
+                    RatingBarIndicator(
+                      rating: filme.pontuacao,
+                      itemBuilder: (context, index) => Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      itemCount: 5,
+                      itemSize: 20.0,
+                      direction: Axis.horizontal,
+                    ),
+                  ],
+                ),
+              ],
             ),
             SizedBox(height: 20),
             Text(
               'Descrição:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 4),
             Text(
               filme.descricao,
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 14),
             ),
           ],
         ),
