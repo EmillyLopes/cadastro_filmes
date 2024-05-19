@@ -81,7 +81,7 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
       } else {
         dbHelper.updateFilme(filme);
       }
-      Navigator.pop(context);
+      Navigator.pop(context, true); // Indicando que o filme foi editado com sucesso
     }
   }
 

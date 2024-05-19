@@ -59,71 +59,68 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
         itemBuilder: (context, index) {
           final filme = filmes[index];
           return Padding(
-            padding: const EdgeInsets.all(12.0), // Increased padding around the card
-            child: Dismissible(
-              key: Key(filme.id.toString()),
-              direction: DismissDirection.endToStart,
-              onDismissed: (direction) {
-                _deleteFilme(filme.id!, index);
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                _showOptions(context, filme);
               },
-              background: Container(
-                alignment: Alignment.centerRight,
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                color: Colors.red,
-                child: Icon(Icons.delete, color: Colors.white),
-              ),
-              child: Card(
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+              child: Dismissible(
+                key: Key(filme.id.toString()),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+                  _deleteFilme(filme.id!, index);
+                },
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  color: Colors.red,
+                  child: Icon(Icons.delete, color: Colors.white),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0), // Increased padding inside the card
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.all(4.0), // Padding inside ListTile
-                        leading: Image.network(
+                child: Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Image.network(
                           filme.urlImagem,
-                          width: 50,
-                          height: 250,
-                          fit: BoxFit.scaleDown,
+                          width: 100,
+                          height: 150,
+                          fit: BoxFit.cover,
                         ),
-                        title: Text(
-                          filme.titulo,
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), // Increased font size
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 10), // Added space between title and genre
-                            Text('${filme.genero}', style: TextStyle(fontSize: 14)), // Increased font size
-                            SizedBox(height: 4), // Added space between genre and duration
-                            Text('${filme.duracao} min', style: TextStyle(fontSize: 14)), // Increased font size
-                            SizedBox(height: 22), // Added space between duration and rating
-                            Row(
-                              children: [
-                                Text('', style: TextStyle(fontSize: 26)), // Increased font size
-                                RatingBarIndicator(
-                                  rating: filme.pontuacao,
-                                  itemBuilder: (context, index) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                  ),
-                                  itemCount: 5,
-                                  itemSize: 24.0,
-                                  direction: Axis.horizontal,
+                        SizedBox(width: 10), // Espaçamento entre a imagem e as informações
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                filme.titulo,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 22),
+                              ),
+                              SizedBox(height: 5), // Espaçamento entre o título e o gênero
+                              Text('${filme.genero}'),
+                              SizedBox(height: 5), // Espaçamento entre o gênero e a duração
+                              Text('${filme.duracao} min'),
+                              SizedBox(height: 20), // Espaçamento entre a duração e a nota
+                              RatingBarIndicator(
+                                rating: filme.pontuacao,
+                                itemBuilder: (context, index) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
                                 ),
-                              ],
-                            ),
-                          ],
+                                itemCount: 5,
+                                itemSize: 20.0,
+                                direction: Axis.horizontal,
+                              ),
+                            ],
+                          ),
                         ),
-                        onTap: () {
-                          _showOptions(context, filme);
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -142,6 +139,7 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
       ),
     );
   }
+
 
   void _showAlert(BuildContext context) {
     showDialog(
@@ -177,7 +175,8 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => DetalhesFilmePage(filme: filme)),
+                  MaterialPageRoute(
+                      builder: (context) => DetalhesFilmePage(filme: filme)),
                 );
               },
             ),
@@ -189,7 +188,11 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CadastrarFilmePage(filme: filme)),
-                );
+                  ).then((value) {
+                    if (value != null && value == true) {
+                  _getFilmes(); // Atualiza a lista de filmes após edição
+                  }
+                });
               },
             ),
           ],
