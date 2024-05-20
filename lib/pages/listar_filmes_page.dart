@@ -48,6 +48,7 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.info),
+            color: Colors.white,
             onPressed: () {
               _showAlert(context);
             },
@@ -146,8 +147,8 @@ class _ListarFilmesPageState extends State<ListarFilmesPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Nome do Grupo"),
-          content: Text("Seu Grupo"),
+          title: Text("Equipe:"),
+          content: Text("Emilly Lopes dos Santos e Silva"),
           actions: <Widget>[
             TextButton(
               child: Text("OK"),

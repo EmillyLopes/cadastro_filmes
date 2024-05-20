@@ -27,13 +27,22 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
 
   final List<MultiSelectItem<String>> _genreItems = [
     MultiSelectItem('Ação', 'Ação'),
-    MultiSelectItem('Comédia', 'Comédia'),
-    MultiSelectItem('Drama', 'Drama'),
-    MultiSelectItem('Terror', 'Terror'),
-    MultiSelectItem('Ficção Científica', 'Ficção Científica'),
-    MultiSelectItem('Romance', 'Romance'),
-    MultiSelectItem('Aventura', 'Aventura'),
     MultiSelectItem('Animação', 'Animação'),
+    MultiSelectItem('Aventura', 'Aventura'),
+    MultiSelectItem('Biografia', 'Biografia'),
+    MultiSelectItem('Comédia', 'Comédia'),
+    MultiSelectItem('Documentário', 'Documentário'),
+    MultiSelectItem('Drama', 'Drama'),
+    MultiSelectItem('Fantasia', 'Fantasia'),
+    MultiSelectItem('Faroeste', 'Faroeste'),
+    MultiSelectItem('Ficção Científica', 'Ficção Científica'),
+    MultiSelectItem('Mistério', 'Mistério'),
+    MultiSelectItem('Musical', 'Musical'),
+    MultiSelectItem('Policial', 'Policial'),
+    MultiSelectItem('Romance', 'Romance'),
+    MultiSelectItem('Suspense', 'Suspense'),
+    MultiSelectItem('Terror', 'Terror'),
+    MultiSelectItem('Thriller', 'Thriller'),
   ];
 
   @override
@@ -89,7 +98,11 @@ class _CadastrarFilmePageState extends State<CadastrarFilmePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.filme == null ? 'Cadastrar Filme' : 'Editar Filme'),
+        backgroundColor: Colors.deepPurple,
+        title: Text(
+          widget.filme == null ? 'Cadastrar Filme' : 'Editar Filme',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
