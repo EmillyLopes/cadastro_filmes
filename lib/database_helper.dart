@@ -59,4 +59,17 @@ class DatabaseHelper {
     var dbClient = await db;
     return await dbClient.delete('filmes', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<List<Filme>> searchFilmes(String query) async {
+    var dbClient = await db;
+    List<Map<String, dynamic>> maps = await dbClient.query(
+      'filmes',
+      where: 'titulo LIKE ?',
+      whereArgs: ['%$query%'],
+    );
+
+    return List.generate(maps.length, (i) {
+      return Filme.fromMap(maps[i]);
+    });
+  }
 }
